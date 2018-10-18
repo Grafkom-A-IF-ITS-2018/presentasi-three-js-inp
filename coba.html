@@ -4,10 +4,10 @@
 
 <head>
 	<title>Example 03.02 - point Light</title>
-	<script type="text/javascript" src="three.js"></script>
+	<script type="text/javascript" src="three.min.js"></script>
 
 	<script type="text/javascript" src="stats.js"></script>
-	<script type="text/javascript" src="dat.gui.js"></script>
+	<script type="text/javascript" src="dat.gui.min.js"></script>
 	<style>
 		body {
 			margin: 0;
@@ -68,25 +68,25 @@
 		sphere.castShadow = true;
 		scene.add(sphere);
 
-		// var coneGeometry = new THREE.ConeGeometry(5, 10, 16);
-		// var coneMaterial = new THREE.MeshLambertMaterial({ color: 0x156289 });
-		// var cone = new THREE.Mesh(coneGeometry, coneMaterial);
+		var coneGeometry = new THREE.ConeGeometry(5, 10, 16);
+		var coneMaterial = new THREE.MeshLambertMaterial({ color: 0x156289 });
+		var cone = new THREE.Mesh(coneGeometry, coneMaterial);
 
-		// cone.position.x = -7.5;
-		// cone.position.z = 0;
-		// cone.position.y = 0;
-		// cone.castShadow = true;
-		// scene.add(cone);
+		cone.position.x = 20;
+		cone.position.z = 0;
+		cone.position.y = 3;
+		cone.castShadow = true;
+		scene.add(cone);
 
-		// 	var cylinderGeometry = new THREE.CylinderGeometry(5, 5, 5, 16);
-		// 	var cylinderMaterial = new THREE.MeshLambertMaterial({ color: 0x156289 });
-		// 	var cylinder = new THREE.Mesh(cylinderGeometry, cylinderMaterial);
+		var cylinderGeometry = new THREE.CylinderGeometry(5, 5, 5, 16);
+		var cylinderMaterial = new THREE.MeshLambertMaterial({ color: 0x156289 });
+		var cylinder = new THREE.Mesh(cylinderGeometry, cylinderMaterial);
 
-		// 	cylinder.position.x = -22.5;
-		// 	cylinder.position.z = 0;
-		// 	cylinder.position.y = -2.5;
-		// 	cylinder.castShadow = true;
-		// 	scene.add(cylinder);
+		cylinder.position.x = 30;
+		cylinder.position.z = 0;
+		cylinder.position.y = 3;
+		cylinder.castShadow = true;
+		scene.add(cylinder);
 
 		// // position and point the camera to the center of the scene
 		camera.position.x = -25;
@@ -166,13 +166,16 @@
 				var pivot = 14;
 				sphereLightMesh.position.x = (invert * (sphereLightMesh.position.x - pivot)) + pivot;
 			}
-
 			pointLight.position.copy(sphereLightMesh.position);
+			
+			scene.rotation.y = (sceneDegree * Math.PI)/ 180.0;
+			sceneDegree += sceneRotationSpeed;
 
-			// render using requestAnimationFrame
 			requestAnimationFrame(render);
 			renderer.render(scene, camera);
 		}
+		var sceneRotationSpeed = 0.25;
+		var sceneDegree = 0.0;
 
 		function initStats() {
 
