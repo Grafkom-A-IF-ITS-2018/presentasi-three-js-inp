@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>EXAMPLE 1</title>
+	<script type="text/javascript" src="./three.min.js"></script>
+	<script type="text/javascript" src="./dat.gui.min.js"></script>
+	<style>
+		body {
+			/* set margin to 0 and overflow to hidden, to go fullscreen */
+			margin: 0;
+			overflow: hidden;
+		}
+	</style>
+</head>
+
+<body>
+	<!-- Div which will hold the Output -->
+	<div id="WebGL-output">
+	</div>
+
+	<!-- Javascript code that runs our Three.js examples -->
+	<script type="text/javascript">
+		let camera;
+		let scene;
+		let renderer;
+		// once everything is loaded, we run our Three.js stuff.
+		const init = () => {
+			// create a scene, that will hold all our elements such as objects, cameras and lights.
+			scene = new THREE.Scene();
+			//scene.fog = new THREE.Fog(0xffffff, 0.015, 100);
+
+			// create a camera, which defines where we're looking at.
+			camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+
+			// create a render and set the size
+			renderer = new THREE.WebGLRenderer();
+
+			// create a dat.gui control
+			let gui = new dat.GUI();
+			
+			renderer.setClearColor(new THREE.Color(0xFFFFFF));
+			renderer.setSize(window.innerWidth, window.innerHeight);
+			document.body.appendChild( renderer.domElement );
+			renderer.shadowMapEnabled = true;
+
+			// create the ground plane
+			let planeGeometry = new THREE.PlaneGeometry(10000, 10000, 1, 1);
+			let planeMaterial = new THREE.MeshLambertMaterial({ color: 0xA9A9A9 });
+			planeMaterial.color.setHSL( 0.095, 1, 0.75 );
+			let plane = new THREE.Mesh(planeGeometry, planeMaterial);
+			
+			//plane.receiveShadow = true;
+
+			// rotate and position the plane
+			plane.rotation.x = -0.5 * Math.PI;
+			plane.position.x = 0;
+			plane.position.y = -5;
+			plane.position.z = 0;
+			plane.receiveShadow = true;
+
+            // add the plane to the scene
+			scene.add(plane);
+
+            let cubeGeometry = new THREE.BoxGeometry(5, 5, 5);
+            let cubeMaterial = new THREE.MeshLambertMaterial({ color: 0x156289 });
+            let cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
+
+            cube.position.x = 22.5;
+            cube.position.z = 0;
+			cube.position.y = -2.5;
+			cube.castShadow = true;
+            scene.add(cube);
+
+            let sphereGeometry = new THREE.SphereGeometry(5, 16, 16);
+            let sphereMaterial = new THREE.MeshLambertMaterial({ color: 0x156289 });
+            let sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
+
+            sphere.position.x = 7.5;
+            sphere.position.z = 0;
+			sphere.position.y = 0;
+			sphere.castShadow = true;
+            scene.add(sphere);
+
+            let coneGeometry = new THREE.ConeGeometry(5, 10, 16);
+            let coneMaterial = new THREE.MeshLambertMaterial({ color: 0x156289 });
+            let cone = new THREE.Mesh(coneGeometry, coneMaterial);
+
+            cone.position.x = -7.5;
+            cone.position.z = 0;
+			cone.position.y = 0;
+			cone.castShadow = true;
+            scene.add(cone);
+
+            let cylinderGeometry = new THREE.CylinderGeometry(5, 5, 5, 16);
+            let cylinderMaterial = new THREE.MeshLambertMaterial({ color: 0x156289 });
+            let cylinder = new THREE.Mesh(cylinderGeometry, cylinderMaterial);
+
+            cylinder.position.x = -22.5;
+            cylinder.position.z = 0;
+			cylinder.position.y = -2.5;
+			cylinder.castShadow = true;
+            scene.add(cylinder);
+			
+			// default camera position
+			camera.position.x = 0.0;
+			camera.position.y = 20;
+			camera.position.z = 60;
+			camera.lookAt(scene.position);
+
+			// LIGHT 
+			let ambientLight = new THREE.AmbientLight(new THREE.Color(0x0C0C0C));
+			scene.add(ambientLight);
+
+			let spotLight = new THREE.SpotLight(0xFFFFFF, 2, 200, 0.75, 0);
+			spotLight.position.set(-40, 60, -10);
+			spotLight.castShadow = true;
+			scene.add(spotLight);
+
+			let hemisphereLight = new THREE.HemisphereLight( 0xffffff, 0xffffff, 0.6 );
+			hemisphereLight.color.setHSL( 0.6, 1, 0.6 );
+			hemisphereLight.groundColor.setHSL( 0.095, 1, 0.75 );
+			hemisphereLight.position.set( 0, 50, 0 );
+			scene.add( hemisphereLight );
+
+			dirLight = new THREE.DirectionalLight( 0xffffff, 1 );
+			dirLight.color.setHSL( 0.1, 1, 0.95 );
+			dirLight.position.set( -1, 1.75, 1 );
+			dirLight.position.multiplyScalar( 30 );
+			scene.add( dirLight );
+
+			
+			let ambientLightControl = new function () {
+				this.ambientColor = '#0C0C0C';
+			}
+
+			let spotLightControl = new function () {
+				this.spotColor = '#FFFFFF';
+				this.disableSpotlight = false;
+				this.posX = -40;
+				this.posY = 60;
+				this.posZ = -10;
+				this.intensity = 2;
+				this.distance = 200;
+				this.angle = 0.75;
+				this.penumbra = 0;
+			}
+
+			this.hemisphereLightControl = new function(){
+				this.posX = 0;
+				this.posY = 50;
+				this.posZ = 0;
+			}
+
+			this.dirLightControl = new function(){
+				this.posX = -30;
+				this.posY = 32.25;
+				this.posZ = 30;
+			}
+
+			ambient = gui.addFolder('Ambient Light');
+			ambient.addColor(ambientLightControl, 'ambientColor').onChange((color)=>{
+				ambientLight.color = new THREE.Color(color);
+			})
+			spot = gui.addFolder('Spot Light');
+			spot.addColor(spotLightControl, 'spotColor').onChange((color)=>{
+				spotLight.color = new THREE.Color(color);
+			})
+			spot.add(spotLightControl, 'disableSpotlight').onChange((e)=>{
+				spotLight.visible = !e;
+			})
+			spot.add(spotLightControl, 'posX', -100, 100).onChange((pos)=>{
+				spotLight.position.x = pos
+			});
+			spot.add(spotLightControl, 'posY', -100, 100).onChange((pos)=>{
+				spotLight.position.y = pos
+			});
+			spot.add(spotLightControl, 'posZ', -100, 100).onChange((pos)=>{
+				spotLight.position.z = pos
+			});
+			spot.add(spotLightControl, 'distance', 0, 200).onChange((e)=>{
+				spotLight.distance = e;
+			});
+			spot.add(spotLightControl, 'angle', 0, 1).onChange((e)=>{
+				spotLight.angle = e;
+			});
+			spot.add(spotLightControl, 'penumbra', 0, 1).onChange((e)=>{
+				spotLight.penumbra = e;
+			});
+			hemi = gui.addFolder('Hemisphere Light');
+			hemi.add(hemisphereLightControl, 'posX', -100, 100).onChange((e)=>{
+				hemisphereLight.position.x = e;
+			});
+			hemi.add(hemisphereLightControl, 'posY', -100, 100).onChange((e)=>{
+				hemisphereLight.position.y = e;
+			})
+			hemi.add(hemisphereLightControl, 'posZ', -100, 100).onChange((e)=>{
+				hemisphereLight.position.z = e;
+			})
+			dir = gui.addFolder('Directional Light');
+			dir.add(dirLightControl, 'posX', -100, 100).onChange((e)=>{
+				dirLight.position.x = e;
+			})
+			dir.add(dirLightControl, 'posY', -100, 100).onChange((e)=>{
+				dirLight.position.y = e;
+			})
+			dir.add(dirLightControl, 'posZ', -100, 100).onChange((e)=>{
+				dirLight.position.z = e;
+			})
+
+			
+
+			
+			render();
+			function render () {
+				// render using requestAnimationFrame
+				//camera.rotation.z = (cameraRotationZ * Math.PI)/ 180.0;
+				scene.rotation.y = (sceneDegree * Math.PI)/ 180.0;
+				sceneDegree += sceneRotationSpeed;
+				requestAnimationFrame(render);
+				renderer.render(scene, camera);
+			}
+		}
+		let sceneRotationSpeed = 0.25;
+		let sceneDegree = 0.0;
+			
+
+		function onResize() {
+			camera.aspect = window.innerWidth / window.innerHeight;
+			camera.updateProjectionMatrix();
+			renderer.setSize(window.innerWidth, window.innerHeight);
+		}
+		window.onload = init;
+		// listen to the resize events
+		window.addEventListener('resize', onResize, false);
+	</script>
+</body>
+
+</html>
