@@ -4,8 +4,11 @@
 
 <head>
 	<title>Point Light - INP</title>
-	<script type="text/javascript" src="three.min.js"></script>
+	<!-- <script type="text/javascript" src="three.min.js"></script> -->
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/97/three.min.js" integrity="sha256-PtfJMWwHJIEzMPJyARHylYJ6wioE2kcfFnwPoGufKOU=" crossorigin="anonymous"></script>
 	<script type="text/javascript" src="dat.gui.min.js"></script>
+	<script type="text/javascript" src="Lensflare.js"></script>
+	
 	<style>
 		body {
 			margin: 0;
@@ -21,7 +24,7 @@
 <script type="text/javascript">
 	function init() {
 		var scene = new THREE.Scene();
-		var camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+		var camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 1000);
 		var renderer = new THREE.WebGLRenderer();
 
 		renderer.setClearColor(new THREE.Color(0xEEEEEE, 1.0));
@@ -98,6 +101,22 @@
 		var pointLight = new THREE.PointLight(pointColor);
 		pointLight.distance = 100;
 		scene.add(pointLight);
+
+		// // lensflare - jangan dihapus dlu
+		// var light = new THREE.PointLight;
+		// // var lensflare = new THREE.Lensflare();
+		// var textureFlare0 = THREE.TextureLoader('https://s3.amazonaws.com/jsfiddle1234/lensflare0.png');
+		// var textureFlare3 = THREE.TextureLoader('https://images-na.ssl-images-amazon.com/images/I/41quvbpzlfS.png');
+
+		// var flareColor = new THREE.Color(0xffaacc);
+		// var lensFlare = new THREE.Lensflare(textureFlare0, 350, 0.0, THREE.AdditiveBlending, flareColor);
+		// lensFlare.addElement(new THREE.LensflareElement(textureFlare3, 60, 0.6));
+		// lensFlare.addElement(new THREE.LensflareElement(textureFlare3, 70, 0.7));
+		// lensFlare.addElement(new THREE.LensflareElement(textureFlare3, 120, 0.9));
+		// lensFlare.addElement(new THREE.LensflareElement(textureFlare3, 70, 1.0));
+		// // lensFlare.position.copy(spotLight.position);
+		// light.add(lensFlare);
+		// scene.add(light);
 
 		// add a small sphere simulating the pointlight
 		var sphereLight = new THREE.SphereGeometry(0.2);
