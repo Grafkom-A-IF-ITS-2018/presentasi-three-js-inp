@@ -125,15 +125,15 @@
 			hemisphereLight.position.set( 0, 50, 0 );
 			scene.add( hemisphereLight );
 
-			dirLight = new THREE.DirectionalLight( 0xffffff, 1 );
+			let dirLight = new THREE.DirectionalLight( 0xffffff, 1 );
 			dirLight.color.setHSL( 0.1, 1, 0.95 );
 			dirLight.position.set( -1, 1.75, 1 );
 			dirLight.position.multiplyScalar( 30 );
 			scene.add( dirLight );
-
 			
 			let ambientLightControl = new function () {
 				this.ambientColor = '#0C0C0C';
+				this.disableAmbientLight = false;
 			}
 
 			let spotLightControl = new function () {
@@ -149,12 +149,14 @@
 			}
 
 			this.hemisphereLightControl = new function(){
-				this.posX = 0;
+				this.disableHemisphereLight = false;
+			    this.posX = 0;
 				this.posY = 50;
 				this.posZ = 0;
 			}
 
 			this.dirLightControl = new function(){
+			    this.disableDirectionalLight = false;
 				this.posX = -30;
 				this.posY = 32.25;
 				this.posZ = 30;
@@ -163,6 +165,9 @@
 			ambient = gui.addFolder('Ambient Light');
 			ambient.addColor(ambientLightControl, 'ambientColor').onChange((color)=>{
 				ambientLight.color = new THREE.Color(color);
+			})
+			ambient.add(ambientLightControl, 'disableAmbientLight').onChange((e) => {
+			    ambientLight.visible = !e
 			})
 			spot = gui.addFolder('Spot Light');
 			spot.addColor(spotLightControl, 'spotColor').onChange((color)=>{
@@ -190,6 +195,9 @@
 				spotLight.penumbra = e;
 			});
 			hemi = gui.addFolder('Hemisphere Light');
+			hemi.add(hemisphereLightControl, 'disableHemisphereLight').onChange(e=>{
+			    hemisphereLight.visible = !e;
+			})
 			hemi.add(hemisphereLightControl, 'posX', -100, 100).onChange((e)=>{
 				hemisphereLight.position.x = e;
 			});
@@ -200,6 +208,9 @@
 				hemisphereLight.position.z = e;
 			})
 			dir = gui.addFolder('Directional Light');
+			dir.add(dirLightControl, 'disableDirectionalLight').onChange(e=>{
+			    dirLight.visible = !e
+			})
 			dir.add(dirLightControl, 'posX', -100, 100).onChange((e)=>{
 				dirLight.position.x = e;
 			})
@@ -210,9 +221,6 @@
 				dirLight.position.z = e;
 			})
 
-			
-
-			
 			render();
 			function render () {
 				// render using requestAnimationFrame
@@ -225,7 +233,6 @@
 		}
 		let sceneRotationSpeed = 0.25;
 		let sceneDegree = 0.0;
-			
 
 		function onResize() {
 			camera.aspect = window.innerWidth / window.innerHeight;
