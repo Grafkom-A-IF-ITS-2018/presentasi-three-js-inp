@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>EXAMPLE 1</title>
+    <script type="text/javascript" src="./three.min.js"></script>
+    <script type="text/javascript" src="./Lensflare.js"></script>
+	<script type="text/javascript" src="./dat.gui.min.js"></script>
+	<style>
+		body {
+			/* set margin to 0 and overflow to hidden, to go fullscreen */
+			margin: 0;
+			overflow: hidden;
+		}
+	</style>
+</head>
+
+<body>
+	<!-- Div which will hold the Output -->
+	<div id="WebGL-output">
+	</div>
+
+	<!-- Javascript code that runs our Three.js examples -->
+	<script type="text/javascript">
+		let camera;
+		let scene;
+		let renderer;
+		// once everything is loaded, we run our Three.js stuff.
+		const init = () => {
+			// create a scene, that will hold all our elements such as objects, cameras and lights.
+			scene = new THREE.Scene();
+            scene.fog = new THREE.Fog( scene.background, 3500, 15000 );
+
+			// create a camera, which defines where we're looking at.
+			camera = new THREE.PerspectiveCamera(30, window.innerWidth / window.innerHeight, 0.1, 100000);
+
+			// create a render and set the size
+            renderer = new THREE.WebGLRenderer( { antialias: true, alpha: true } );
+
+			// create a dat.gui control
+			let gui = new dat.GUI();
+			
+			renderer.setClearColor(new THREE.Color(0xFFFFFF));
+			renderer.setSize(window.innerWidth, window.innerHeight);
+			document.body.appendChild( renderer.domElement );
+			renderer.shadowMapEnabled = true;
+
+			// create the ground plane
+			let planeGeometry = new THREE.PlaneGeometry(10000, 10000, 1, 1);
+			let planeMaterial = new THREE.MeshLambertMaterial({ color: 0xA9A9A9 });
+			planeMaterial.color.setHSL( 0.095, 1, 0.75 );
+			let plane = new THREE.Mesh(planeGeometry, planeMaterial);
+			
+			//plane.receiveShadow = true;
+
+			// rotate and position the plane
+			plane.rotation.x = -0.5 * Math.PI;
+			plane.position.x = 0;
+			plane.position.y = -5;
+			plane.position.z = 0;
+			plane.receiveShadow = true;
+
+            // add the plane to the scene
+			scene.add(plane);
+
+            let cubeGeometry = new THREE.BoxGeometry(5, 5, 5);
+            let cubeMaterial = new THREE.MeshLambertMaterial({ color: 0x156289 });
+            let cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
+
+            cube.position.x = 22.5;
+            cube.position.z = 0;
+			cube.position.y = -2.5;
+			cube.castShadow = true;
+            scene.add(cube);
+
+            let sphereGeometry = new THREE.SphereGeometry(5, 16, 16);
+            let sphereMaterial = new THREE.MeshLambertMaterial({ color: 0x156289 });
+            let sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
+
+            sphere.position.x = 7.5;
+            sphere.position.z = 0;
+			sphere.position.y = 0;
+			sphere.castShadow = true;
+            scene.add(sphere);
+
+            let coneGeometry = new THREE.ConeGeometry(5, 10, 16);
+            let coneMaterial = new THREE.MeshLambertMaterial({ color: 0x156289 });
+            let cone = new THREE.Mesh(coneGeometry, coneMaterial);
+
+            cone.position.x = -7.5;
+            cone.position.z = 0;
+			cone.position.y = 0;
+			cone.castShadow = true;
+            scene.add(cone);
+
+            let cylinderGeometry = new THREE.CylinderGeometry(5, 5, 5, 16);
+            let cylinderMaterial = new THREE.MeshLambertMaterial({ color: 0x156289 });
+            let cylinder = new THREE.Mesh(cylinderGeometry, cylinderMaterial);
+
+            cylinder.position.x = -22.5;
+            cylinder.position.z = 0;
+			cylinder.position.y = -2.5;
+			cylinder.castShadow = true;
+            scene.add(cylinder);
+			
+			// default camera position
+			camera.position.x = -20;
+			camera.position.y = 10;
+			camera.position.z = 45;
+			camera.lookAt(scene.position);
+
+            // LIGHT 
+            let hemisphereLight = new THREE.HemisphereLight( 0xffffff, 0xffffff, 0.6 );
+			hemisphereLight.color.setHSL( 0.6, 1, 0.6 );
+			hemisphereLight.groundColor.setHSL( 0.095, 1, 0.75 );
+			hemisphereLight.position.set( 0, 50, 0 );
+			scene.add( hemisphereLight );
+
+            // lensflares
+            var textureLoader = new THREE.TextureLoader();
+            var textureFlare0 = textureLoader.load( 'lensflare0.png' );
+            var textureFlare3 = textureLoader.load( 'lensflare3.png' );
+            addLight( 0.55, 0.9, 0.5, 0, 0, -100 );
+            function addLight( h, s, l, x, y, z ) {
+                var light = new THREE.PointLight( 0xffffff, 1.5, 2000 );
+                light.color.setHSL( h, s, l );
+                light.position.set( x, y, z );
+                scene.add( light );
+                var lensflare = new THREE.Lensflare();
+                lensflare.addElement( new THREE.LensflareElement( textureFlare0, 700, 0, light.color ) );
+                lensflare.addElement( new THREE.LensflareElement( textureFlare3, 60, 0.6 ) );
+                lensflare.addElement( new THREE.LensflareElement( textureFlare3, 70, 0.7 ) );
+                lensflare.addElement( new THREE.LensflareElement( textureFlare3, 120, 0.9 ) );
+                lensflare.addElement( new THREE.LensflareElement( textureFlare3, 70, 1 ) );
+                light.add( lensflare );
+                console.log(light);
+            }
+            
+            scene.rotation.y = -(25 * Math.PI)/180.0;
+
+			render();
+			function render () {
+				// render using requestAnimationFrame
+				// camera.rotation.z = (cameraRotationZ * Math.PI)/ 180.0;
+				// scene.rotation.y = -(sceneDegree * Math.PI)/ 180.0;
+				// sceneDegree += sceneRotationSpeed;
+				requestAnimationFrame(render);
+				renderer.render(scene, camera);
+            }
+            
+            var xSpeed = 1;
+            var ySpeed = 1;
+
+            document.addEventListener("keydown", onDocumentKeyDown, false);
+            function onDocumentKeyDown(event) {
+                var keyCode = event.keyCode;
+                if (keyCode == 38) {
+                    camera.position.y += ySpeed;
+                } else if (keyCode == 40) {
+                    camera.position.y -= ySpeed;
+                } else if (keyCode == 37) {
+                    camera.position.x -= xSpeed;
+                } else if (keyCode == 39) {
+                    camera.position.x += xSpeed;
+                }
+            };
+		}
+		let sceneRotationSpeed = 0.25;
+		let sceneDegree = 0.0;
+
+		function onResize() {
+			camera.aspect = window.innerWidth / window.innerHeight;
+			camera.updateProjectionMatrix();
+			renderer.setSize(window.innerWidth, window.innerHeight);
+		}
+		window.onload = init;
+		// listen to the resize events
+		window.addEventListener('resize', onResize, false);
+	</script>
+</body>
+
+</html>
