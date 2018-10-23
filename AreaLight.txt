@@ -1,0 +1,3 @@
+#Referensi arealight without library
+
+http://jsfiddle.net/hh74z2ft
