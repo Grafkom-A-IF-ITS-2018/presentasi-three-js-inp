@@ -87,7 +87,8 @@
 
 				}
 
-				camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 1, 1000 );
+				//prespektif kamera
+				camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 1, 500 );
 				camera.position.set( 0, 20, 35 );
 
 				scene = new THREE.Scene();
@@ -96,7 +97,7 @@
 				scene.add( ambient );
 
 				rectLight = new THREE.RectAreaLight( 0xffffff, 1, 10, 10 );
-				rectLight.position.set( 5, 5, 0 );
+				rectLight.position.set( 3, 3, 0 );
 				scene.add( rectLight );
 
 				var rectLightMesh = new THREE.Mesh( new THREE.PlaneBufferGeometry(), new THREE.MeshBasicMaterial() );
@@ -143,7 +144,7 @@
 
 				// GUI
 
-				var gui = new dat.GUI( { width: 300 } );
+				var gui = new dat.GUI( { width: 250 } );
 				gui.open();
 
 				param = {
@@ -184,14 +185,14 @@
 
 				} );
 
-				lightFolder.add( param, 'intensity', 0.0, 4.0 ).step( 0.01 ).onChange( function ( val ) {
+				lightFolder.add( param, 'intensity', 0.0, 5.0 ).step( 0.01 ).onChange( function ( val ) {
 
 					rectLight.intensity = val;
 					rectLightMesh.material.color.copy( rectLight.color ).multiplyScalar( rectLight.intensity );
 
 				} );
 
-				lightFolder.add( param, 'ambient', 0.0, 0.2 ).step( 0.01 ).onChange( function ( val ) {
+				lightFolder.add( param, 'ambient', 0.0, 1.0 ).step( 0.01 ).onChange( function ( val ) {
 
 					ambient.intensity = val;
 
@@ -257,7 +258,7 @@
 					var lx = r * Math.cos( t );
 					var lz = r * Math.sin( t );
 
-					var ly = 5.0 + 5.0 * Math.sin( t / 3.0 );
+					var ly = 5.0 + 3.0 * Math.sin( t / 4.0 );
 
 					rectLight.position.set( lx, ly, lz );
 					rectLight.lookAt( origin );
